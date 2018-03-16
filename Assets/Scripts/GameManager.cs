@@ -4,16 +4,21 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
+    private static GameManager instance;
     public static GameManager Instance {
         get {
-            if (Instance == null)
+
+            if (!instance)
             {
-                return new GameManager();
+                instance = FindObjectOfType(typeof(GameManager)) as GameManager;
+
+                if (!instance)
+                {
+                    Debug.LogError("There needs to be one active GameManager script on a GameObject in your scene.");
+                }
             }
-            else
-            {
-                return Instance;
-            }
+
+            return instance;
         }
     }
 

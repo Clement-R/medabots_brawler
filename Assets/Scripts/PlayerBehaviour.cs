@@ -12,11 +12,10 @@ public class PlayerBehaviour : MonoBehaviour {
         }
     }
 
-    private int _id;
+    private int _id = 1;
 
     void Start ()
 	{
-        
 	}
 
 	void Update ()
