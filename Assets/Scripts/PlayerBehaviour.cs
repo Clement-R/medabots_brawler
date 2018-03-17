@@ -20,7 +20,7 @@ public class PlayerBehaviour : MonoBehaviour {
 
 	void Update ()
 	{
-        if (!GameManager.Instance.IsGamePaused())
+        if (!GameManager.Instance.gamePaused)
         {
             // TODO : Check life
         }

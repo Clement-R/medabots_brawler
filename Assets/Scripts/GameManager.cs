@@ -4,25 +4,27 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
-    private static GameManager instance;
+    public bool debugMode = false;
+    public string playerTag = "Player";
+    public bool gamePaused;
+
+    private static GameManager _instance;
     public static GameManager Instance {
         get {
 
-            if (!instance)
+            if (!_instance)
             {
-                instance = FindObjectOfType(typeof(GameManager)) as GameManager;
+                _instance = FindObjectOfType(typeof(GameManager)) as GameManager;
 
-                if (!instance)
+                if (!_instance)
                 {
                     Debug.LogError("There needs to be one active GameManager script on a GameObject in your scene.");
                 }
             }
 
-            return instance;
+            return _instance;
         }
     }
-
-    private bool _gamePaused;
 
 	void Start ()
 	{
@@ -33,9 +35,4 @@ public class GameManager : MonoBehaviour {
 	{
 		
 	}
-
-    public bool IsGamePaused()
-    {
-        return _gamePaused;
-    }
 }
