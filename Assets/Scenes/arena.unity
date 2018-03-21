@@ -1483,6 +1483,21 @@ Prefab:
       propertyPath: jumpTimeToApex
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 114028748314147872, guid: 848677ba231b66c4cbae2fbd43074188,
+        type: 2}
+      propertyPath: jumpHeight
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114028748314147872, guid: 848677ba231b66c4cbae2fbd43074188,
+        type: 2}
+      propertyPath: wallJumpHeight
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114028748314147872, guid: 848677ba231b66c4cbae2fbd43074188,
+        type: 2}
+      propertyPath: wallJumpHorizontalForce
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 848677ba231b66c4cbae2fbd43074188, type: 2}
   m_IsPrefabParent: 0
