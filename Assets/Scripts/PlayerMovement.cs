@@ -88,7 +88,10 @@ public class PlayerMovement : MonoBehaviour {
             _wallDetected = false;
             _touchingSide = Side.none;
 
-            RaycastHit2D[] rightSideHits = Physics2D.RaycastAll(new Vector2(transform.position.x, transform.position.y + ((2f / 3f) * playerHeight / 2f)), new Vector2(1, 0), (playerWidth / 2f) + 0.2f);
+            List<RaycastHit2D> rightSideHits = new List<RaycastHit2D>();
+            rightSideHits.AddRange(Physics2D.RaycastAll(new Vector2(transform.position.x, transform.position.y + ((2f / 3f) * playerHeight / 2f)), new Vector2(1, 0), (playerWidth / 2f) + 0.2f));
+            rightSideHits.AddRange(Physics2D.RaycastAll(new Vector2(transform.position.x, transform.position.y - ((2f / 3f) * playerHeight / 2f)), new Vector2(1, 0), (playerWidth / 2f) + 0.2f));
+
             foreach (var hit in rightSideHits)
             {
                 if (hit.collider != null && !hit.collider.gameObject.CompareTag(GameManager.Instance.playerTag))
@@ -102,15 +105,21 @@ public class PlayerMovement : MonoBehaviour {
                     }
                 }
             }
+
             // Debug raycast
             if (GameManager.Instance.debugMode)
             {
                 Debug.DrawLine(new Vector2(transform.position.x, transform.position.y + ((2f / 3f) * playerHeight / 2f)),
                                new Vector2(transform.position.x, transform.position.y + ((2f / 3f) * playerHeight / 2f)) + new Vector2((playerWidth / 2f) + 0.2f, 0f),
                                Color.red);
+                Debug.DrawLine(new Vector2(transform.position.x, transform.position.y - ((2f / 3f) * playerHeight / 2f)),
+                               new Vector2(transform.position.x, transform.position.y - ((2f / 3f) * playerHeight / 2f)) + new Vector2((playerWidth / 2f) + 0.2f, 0f),
+                               Color.red);
             }
 
-            RaycastHit2D[] leftSideHits = Physics2D.RaycastAll(new Vector2(transform.position.x, transform.position.y + ((2f / 3f) * playerHeight / 2f)), new Vector2(-1, 0), (playerWidth / 2f) + 0.2f);
+            List<RaycastHit2D> leftSideHits = new List<RaycastHit2D>();
+            leftSideHits.AddRange(Physics2D.RaycastAll(new Vector2(transform.position.x, transform.position.y + ((2f / 3f) * playerHeight / 2f)), new Vector2(-1, 0), (playerWidth / 2f) + 0.2f));
+            leftSideHits.AddRange(Physics2D.RaycastAll(new Vector2(transform.position.x, transform.position.y - ((2f / 3f) * playerHeight / 2f)), new Vector2(-1, 0), (playerWidth / 2f) + 0.2f));
             foreach (var hit in leftSideHits)
             {
                 if (hit.collider != null && !hit.collider.gameObject.CompareTag(GameManager.Instance.playerTag))
@@ -129,6 +138,9 @@ public class PlayerMovement : MonoBehaviour {
             {
                 Debug.DrawLine(new Vector2(transform.position.x, transform.position.y + ((2f / 3f) * playerHeight / 2f)),
                                new Vector2(transform.position.x, transform.position.y + ((2f / 3f) * playerHeight / 2f)) + new Vector2((-playerWidth / 2f) - 0.2f, 0f),
+                               Color.red);
+                Debug.DrawLine(new Vector2(transform.position.x, transform.position.y - ((2f / 3f) * playerHeight / 2f)),
+                               new Vector2(transform.position.x, transform.position.y - ((2f / 3f) * playerHeight / 2f)) + new Vector2((-playerWidth / 2f) - 0.2f, 0f),
                                Color.red);
             }
 
