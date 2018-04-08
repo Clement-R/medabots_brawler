@@ -1945,7 +1945,7 @@ Prefab:
     - target: {fileID: 114028748314147872, guid: 848677ba231b66c4cbae2fbd43074188,
         type: 2}
       propertyPath: dashForce
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 114028748314147872, guid: 848677ba231b66c4cbae2fbd43074188,
         type: 2}
@@ -1956,6 +1956,16 @@ Prefab:
         type: 2}
       propertyPath: dashCooldown
       value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 114028748314147872, guid: 848677ba231b66c4cbae2fbd43074188,
+        type: 2}
+      propertyPath: dashHorizontalForce
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 114028748314147872, guid: 848677ba231b66c4cbae2fbd43074188,
+        type: 2}
+      propertyPath: dashVerticalForce
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 848677ba231b66c4cbae2fbd43074188, type: 2}

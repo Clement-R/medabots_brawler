@@ -16,7 +16,8 @@ public class PlayerMovement : MonoBehaviour {
     public float wallJumpHorizontalForce = 0.25f;
 
     [Header("Dash")]
-    public float dashForce = 2f;
+    public float dashHorizontalForce = 2f;
+    public float dashVerticalForce = 2f;
     public float dashDuration = 0.25f;
     public float dashCooldown = 0.25f;
 
@@ -94,16 +95,44 @@ public class PlayerMovement : MonoBehaviour {
             {
                 if(_canDash)
                 {
-                    // TODO : Change that for facing direction
-                    float xAxis = Input.GetAxisRaw("L_XAxis_" + _player.id);
+                    bool directionFound = false;
 
-                    if (xAxis > 0)
+                    float xAxis = Input.GetAxisRaw("L_XAxis_" + _player.id);
+                    float yAxis = -Input.GetAxisRaw("L_YAxis_" + _player.id);
+
+                    if(xAxis != 0)
                     {
-                        Dash(Side.right);
+                        if (xAxis >= 0.5)
+                        {
+                            Dash(new Vector2(1, 0));
+                            directionFound = true;
+                        }
+                        else if (xAxis <= -0.5)
+                        {
+                            Dash(new Vector2(-1, 0));
+                            directionFound = true;
+                        }
                     }
-                    else
+
+                    if(yAxis != 0)
                     {
-                        Dash(Side.left);
+                        if (yAxis >= 0.5)
+                        {
+                            Dash(new Vector2(0, 1));
+                            directionFound = true;
+                        }
+                        else if (yAxis <= -0.5)
+                        {
+                            Dash(new Vector2(0, -1));
+                            directionFound = true;
+                        }
+                    }
+
+                    // TODO : Change that for facing direction
+                    // If no direction is given we dash to the left
+                    if (!directionFound)
+                    {
+                        Dash(new Vector2(1, 0));
                     }
                 }
             }
@@ -135,8 +164,6 @@ public class PlayerMovement : MonoBehaviour {
             {
                 _physicState = PhysicState.ground;
             }
-
-            print(_physicState);
 
             // Update gravity scale according to the phyisc state
             switch (_physicState)
@@ -283,6 +310,8 @@ public class PlayerMovement : MonoBehaviour {
                     }
                 }
             }
+
+            print(_rb2d.velocity);
         }
     }
 
@@ -295,18 +324,13 @@ public class PlayerMovement : MonoBehaviour {
         _lastJumpTime = Time.time;
     }
 
-    private void Dash(Side side)
+    private void Dash(Vector2 direction)
     {
         _canDash = false;
 
-        if (side == Side.left)
-        {
-            _rb2d.AddForce(new Vector2(-dashForce, 0), ForceMode2D.Impulse);
-        }
-        else
-        {
-            _rb2d.AddForce(new Vector2(dashForce, 0), ForceMode2D.Impulse);
-        }
+        _rb2d.velocity = Vector2.zero;
+
+        _rb2d.AddForce(new Vector2(dashHorizontalForce * direction.x, dashVerticalForce * direction.y), ForceMode2D.Impulse);
 
         _lastDashTime = Time.time;
     }
