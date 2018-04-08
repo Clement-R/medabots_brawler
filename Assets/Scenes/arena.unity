@@ -1920,7 +1920,7 @@ Prefab:
     - target: {fileID: 114028748314147872, guid: 848677ba231b66c4cbae2fbd43074188,
         type: 2}
       propertyPath: wallJumpHorizontalForce
-      value: 2
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 61513214855607472, guid: 848677ba231b66c4cbae2fbd43074188,
         type: 2}
@@ -1941,6 +1941,21 @@ Prefab:
         type: 2}
       propertyPath: jumpGravityScale
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114028748314147872, guid: 848677ba231b66c4cbae2fbd43074188,
+        type: 2}
+      propertyPath: dashForce
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114028748314147872, guid: 848677ba231b66c4cbae2fbd43074188,
+        type: 2}
+      propertyPath: dashDuration
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 114028748314147872, guid: 848677ba231b66c4cbae2fbd43074188,
+        type: 2}
+      propertyPath: dashCooldown
+      value: 0.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 848677ba231b66c4cbae2fbd43074188, type: 2}

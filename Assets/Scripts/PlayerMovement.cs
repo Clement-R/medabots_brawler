@@ -9,7 +9,6 @@ public class PlayerMovement : MonoBehaviour {
 
     [Header("Jump")]
     public float jumpHeight = 2f;
-    // public float jumpTimeToApex = 0.25f;
 
     [Header("Wall slide")]
     public float verticalSpeed = 2.5f;
@@ -18,6 +17,8 @@ public class PlayerMovement : MonoBehaviour {
 
     [Header("Dash")]
     public float dashForce = 2f;
+    public float dashDuration = 0.25f;
+    public float dashCooldown = 0.25f;
 
     [Header("Gravity")]
     public float jumpGravityScale = 0f;
@@ -29,12 +30,15 @@ public class PlayerMovement : MonoBehaviour {
     private PlayerBehaviour _player;
     private bool _grounded = true;
     private bool _canJump = true;
+    private bool _canDash = true;
     private bool _wallDetected = false;
     private Side _touchingSide = Side.none;
     private PhysicState _physicState = PhysicState.ground;
 
     private float _lastJumpTime = 0f;
     private float _lastWallJumpTime = 0f;
+
+    private float _lastDashTime = 0f;
 
     private enum Side
     {
@@ -48,7 +52,8 @@ public class PlayerMovement : MonoBehaviour {
         ground,
         jump,
         fall,
-        slide
+        slide,
+        dash
     }
 
     private void Awake()
@@ -83,6 +88,25 @@ public class PlayerMovement : MonoBehaviour {
                     }
                 }
             }
+
+            // Dash control
+            if (Input.GetButtonDown("B_" + _player.id))
+            {
+                if(_canDash)
+                {
+                    // TODO : Change that for facing direction
+                    float xAxis = Input.GetAxisRaw("L_XAxis_" + _player.id);
+
+                    if (xAxis > 0)
+                    {
+                        Dash(Side.right);
+                    }
+                    else
+                    {
+                        Dash(Side.left);
+                    }
+                }
+            }
         }
     }
 
@@ -91,7 +115,11 @@ public class PlayerMovement : MonoBehaviour {
         if (!GameManager.Instance.gamePaused)
         {
             // Update physic state
-            if (_rb2d.velocity.y < 0 && _touchingSide == Side.none)
+            if(Time.time <= _lastDashTime + dashDuration && !_canDash)
+            {
+                _physicState = PhysicState.dash;
+            }
+            else if (_rb2d.velocity.y < 0 && _touchingSide == Side.none)
             {
                 _physicState = PhysicState.fall;
             }
@@ -108,29 +136,48 @@ public class PlayerMovement : MonoBehaviour {
                 _physicState = PhysicState.ground;
             }
 
+            print(_physicState);
+
             // Update gravity scale according to the phyisc state
-            if (_physicState == PhysicState.fall)
+            switch (_physicState)
             {
-                _rb2d.gravityScale = fallGravityScale;
-            }
-            else if (_physicState == PhysicState.jump)
-            {
-                _rb2d.gravityScale = jumpGravityScale;
-            }
-            else if (_physicState == PhysicState.slide)
-            {
-                _rb2d.gravityScale = 0;
-            }
-            else
-            {
-                _rb2d.gravityScale = 1;
+                case PhysicState.ground:
+                    _rb2d.gravityScale = 1;
+                    break;
+
+                case PhysicState.jump:
+                    _rb2d.gravityScale = jumpGravityScale;
+                    break;
+
+                case PhysicState.fall:
+                    _rb2d.gravityScale = fallGravityScale;
+                    break;
+
+                case PhysicState.slide:
+                    _rb2d.gravityScale = 0;
+                    break;
+
+                case PhysicState.dash:
+                    _rb2d.gravityScale = 0;
+                    break;
+
+                default:
+                    _rb2d.gravityScale = 1;
+                    break;
             }
 
-            // Reset speed and apply new speed
+            // Check dash cooldown
+            if (Time.time > _lastDashTime + dashDuration + dashCooldown && !_canDash)
+            {
+                _canDash = true;
+            }
+
+            // Get axis inputs
             float xAxis = Input.GetAxisRaw("L_XAxis_" + _player.id);
             float yAxis = -Input.GetAxisRaw("L_YAxis_" + _player.id);
 
-            if (Time.time >= _lastWallJumpTime + 0.05f)
+            // Reset speed and apply new speed
+            if (Time.time >= _lastWallJumpTime + 0.05f && _physicState != PhysicState.dash)
             {
                 _rb2d.velocity = new Vector2(0, _rb2d.velocity.y);
                 if (xAxis != 0f)
@@ -244,21 +291,24 @@ public class PlayerMovement : MonoBehaviour {
         _canJump = false;
 
         _rb2d.AddForce(new Vector2(0, jumpHeight), ForceMode2D.Impulse);
-        // rb2d.AddForce(new Vector2(0, (jumpHeight - (0.5f * Physics2D.gravity.y * rb2d.gravityScale * jumpTimeToApex * jumpTimeToApex) / jumpTimeToApex)), ForceMode2D.Impulse);
 
         _lastJumpTime = Time.time;
     }
 
     private void Dash(Side side)
     {
-        if(side == Side.left)
+        _canDash = false;
+
+        if (side == Side.left)
         {
-            _rb2d.AddForce(new Vector2(0, jumpHeight), ForceMode2D.Impulse);
+            _rb2d.AddForce(new Vector2(-dashForce, 0), ForceMode2D.Impulse);
         }
         else
         {
-
+            _rb2d.AddForce(new Vector2(dashForce, 0), ForceMode2D.Impulse);
         }
+
+        _lastDashTime = Time.time;
     }
 
     private void WallJump(Side side)
@@ -267,13 +317,11 @@ public class PlayerMovement : MonoBehaviour {
         {
             case Side.right:
                 _rb2d.AddForce(new Vector2(-wallJumpHorizontalForce, wallJumpHeight), ForceMode2D.Impulse);
-                // _rb2d.AddForce(new Vector2(-wallJumpHorizontalForce, (wallJumpHeight - (0.5f * Physics2D.gravity.y * _rb2d.gravityScale * jumpTimeToApex * jumpTimeToApex) / jumpTimeToApex)), ForceMode2D.Impulse);
                 _lastWallJumpTime = Time.time;
                 break;
 
             case Side.left:
                 _rb2d.AddForce(new Vector2(wallJumpHorizontalForce, wallJumpHeight), ForceMode2D.Impulse);
-                // _rb2d.AddForce(new Vector2(wallJumpHorizontalForce, (wallJumpHeight - (0.5f * Physics2D.gravity.y * _rb2d.gravityScale * jumpTimeToApex * jumpTimeToApex) / jumpTimeToApex)), ForceMode2D.Impulse);
                 _lastWallJumpTime = Time.time;
                 break;
 
